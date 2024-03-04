@@ -1,7 +1,8 @@
+import 'dart:io';
+
 import 'algorithms/max_search.dart';
 import 'data_structures/node.dart';
 import 'operations/input_output.dart';
-import 'operations/list_operations.dart';
 
 void userInterface() {
   var lista = Node(null);
@@ -9,62 +10,85 @@ void userInterface() {
   clearConsole();
 
   while (true) {
-    print("\n=== Menu ===");
+    print(">=~~=< Menu >=~~=<");
     print("1. Adicionar valor");
     print("2. Remover valor");
-    print("3. Encontrar valor máximo");
-    print("4. Imprimir lista");
-    print("5. Sair");
+    print("3. Sair");
+    listInterface(lista, pointer);
 
     var choice = promptInt("Escolha uma opção: ");
 
     switch (choice) {
       case 1:
-        var value = promptInt("Digite o valor a ser adicionado: ");
-        var newNode = Node(value);
-        newNode.next = lista.next;
-        lista.next = newNode;
-        pointer.searchMax(newNode);
         clearConsole();
-        print("Valor adicionado com sucesso");
+        print(">=~~=< Adicionar valor >=~~=<");
+        listInterface(lista, pointer);
+        do {
+          var input =
+              prompt("Digite o valor a ser adicionado ('q' para parar): ");
+          if (input.toLowerCase() == 'q') {
+            clearConsole();
+            break;
+          }
+          var value = int.tryParse(input);
+          if (value == null) {
+            stdout.write('\x1B[1F\x1B[2K\x1B[1F\x1B[2K');
+            print("Por favor, insira um número válido ou 'q' para parar");
+            continue;
+          }
+          //add
+          var newNode = Node(value);
+          newNode.next = lista.next;
+          lista.next = newNode;
+          pointer.searchMax(newNode);
+          //
+          clearConsole();
+          print(">=~~=< Adicionar valor >=~~=<");
+          listInterface(lista, pointer);
+        } while (true);
         break;
       case 2:
-        var value = promptInt("Digite o valor a ser removido: ");
         clearConsole();
-        if (lista.next == null) {
-          print("Lista vazia. Nada para remover");
-          break;
-        }
-        var prev = lista;
-        Node? current = lista.next!;
-        while (current != null && current.data != value) {
-          prev = current;
-          current = current.next;
-        }
-        if (current != null && current.data == value) {
-          prev.next = current.next;
-          if (pointer.max == current) {
-            pointer.searchMax(lista.next);
+        print(">=~~=< Remover valor >=~~=<");
+        listInterface(lista, pointer);
+        do {
+          var input =
+              prompt("Digite o valor a ser removido ('q' para parar): ");
+          if (input.toLowerCase() == 'q') {
+            clearConsole();
+            break;
           }
-          print("Valor removido com sucesso");
-        } else {
-          print("Valor não encontrado na lista");
-        }
+          var value = int.tryParse(input);
+          if (value == null) {
+            stdout.write('\x1B[1F\x1B[2K\x1B[1F\x1B[2K');
+            print("Por favor, insira um número válido ou 'q' para parar");
+            continue;
+          }
+          clearConsole();
+          print(">=~~=< Remover valor >=~~=<");
+          if (lista.next == null) {
+            print("Lista vazia. Nada para remover");
+            break;
+          }
+          var prev = lista;
+          Node? current = lista.next!;
+          while (current != null && current.data != value) {
+            prev = current;
+            current = current.next;
+          }
+          if (current != null && current.data == value) {
+            prev.next = current.next;
+            if (pointer.max == current) {
+              pointer.searchMax(lista.next);
+            }
+            print("Valor $value removido com sucesso");
+          } else {
+            print("Valor $value não encontrado na lista");
+          }
+          listInterface(lista, pointer);
+        } while (true);
         break;
       case 3:
-        clearConsole();
-        if (pointer.max != null) {
-          print("Máximo: ${pointer.max!.data}");
-        } else {
-          print("Lista vazia");
-        }
-        break;
-      case 4:
-        clearConsole();
-        print("Lista:");
-        printList(lista.next);
-        break;
-      case 5:
         clearConsole();
         print("Saindo...");
         return;
